@@ -1,4 +1,5 @@
 from pydantic import BaseModel #, Field
+import requests
 
 def labels(s: str) -> list[str]:
     """Find the labels in a CEX-formatted string.
@@ -51,10 +52,6 @@ class CexBlock(BaseModel):
     data: list[str]
 
 
-
-    
-
-
     @classmethod
     def from_text(cls, src: str, label: str = None) -> list["CexBlock"]:
         """Create a list of `CexBlock`s from a CEX-formatted string source.
@@ -98,5 +95,41 @@ class CexBlock(BaseModel):
         
         return blocks
 
+    @classmethod
+    def from_file(cls, filepath: str, label: str = None) -> list["CexBlock"]:
+        """Create a list of `CexBlock`s from a CEX-formatted file.
+        
+        Reads a CEX file and parses it into CexBlock instances. Works identically
+        to from_text but reads from a file path instead of a string.
+        
+        Args:
+            filepath (str): Path to the CEX file to parse.
+            label (str, optional): If provided, only return blocks with this label.
+        
+        Returns:
+            list["CexBlock"]: A list of CexBlock instances, one for each labeled block.
+                If label is specified, only blocks matching that label are returned.
+        """
+        with open(filepath, 'r') as f:
+            content = f.read()
+        return cls.from_text(content, label=label)
 
+    @classmethod
+    def from_url(cls, url: str, label: str = None) -> list["CexBlock"]:
+        """Create a list of `CexBlock`s from a CEX-formatted URL.
+        
+        Fetches CEX data from a URL and parses it into CexBlock instances. Works identically
+        to from_text but retrieves content from a URL instead of a string.
+        
+        Args:
+            url (str): URL pointing to the CEX file to parse.
+            label (str, optional): If provided, only return blocks with this label.
+        
+        Returns:
+            list["CexBlock"]: A list of CexBlock instances, one for each labeled block.
+                If label is specified, only blocks matching that label are returned.
+        """
+        response = requests.get(url)
+        response.raise_for_status()  # Raise an exception for bad status codes
+        return cls.from_text(response.text, label=label)
     
