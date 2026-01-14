@@ -5,3 +5,11 @@ description = "A Python library for reading data in CITE EXchange (CEX) format."
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = []
+
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cite_exchange"]
