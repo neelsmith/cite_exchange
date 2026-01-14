@@ -56,7 +56,7 @@ class CexBlock(BaseModel):
 
 
     @classmethod
-    def from_lines(cls, src: str, label: str = None) -> list["CexBlock"]:
+    def from_text(cls, src: str, label: str = None) -> list["CexBlock"]:
         """Create a list of `CexBlock`s from a CEX-formatted string source.
         
         Parses CEX format where blocks begin with label lines (starting with `#!`).

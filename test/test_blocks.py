@@ -83,7 +83,7 @@ class TestValidLabel(unittest.TestCase):
 
 
 class TestCexBlockFromLines(unittest.TestCase):
-    """Test cases for the CexBlock.from_lines method."""
+    """Test cases for the CexBlock.from_text method."""
 
     def setUp(self):
         """Load test data."""
@@ -95,58 +95,58 @@ class TestCexBlockFromLines(unittest.TestCase):
         with open(test_data_path, 'r') as f:
             self.lax_data = f.read()
 
-    def test_from_lines_returns_list_of_cex_blocks(self):
-        """Test that from_lines returns a list of CexBlock objects."""
-        result = CexBlock.from_lines(self.burney_data)
+    def test_from_text_returns_list_of_cex_blocks(self):
+        """Test that from_text returns a list of CexBlock objects."""
+        result = CexBlock.from_text(self.burney_data)
         self.assertIsInstance(result, list)
         self.assertTrue(all(isinstance(b, CexBlock) for b in result))
 
-    def test_from_lines_parses_all_blocks(self):
-        """Test that from_lines parses all labeled blocks."""
-        result = CexBlock.from_lines(self.burney_data)
+    def test_from_text_parses_all_blocks(self):
+        """Test that from_text parses all labeled blocks."""
+        result = CexBlock.from_text(self.burney_data)
         labels_found = [b.label for b in result]
         self.assertIn("ctscatalog", labels_found)
         self.assertIn("ctsdata", labels_found)
 
-    def test_from_lines_excludes_empty_lines(self):
-        """Test that from_lines excludes empty lines from data."""
-        result = CexBlock.from_lines(self.burney_data)
+    def test_from_text_excludes_empty_lines(self):
+        """Test that from_text excludes empty lines from data."""
+        result = CexBlock.from_text(self.burney_data)
         for block in result:
             self.assertTrue(all(line.strip() for line in block.data))
 
-    def test_from_lines_excludes_comments(self):
-        """Test that from_lines excludes comment lines starting with //."""
-        result = CexBlock.from_lines(self.lax_data)
+    def test_from_text_excludes_comments(self):
+        """Test that from_text excludes comment lines starting with //."""
+        result = CexBlock.from_text(self.lax_data)
         for block in result:
             self.assertTrue(all(not line.startswith('//') for line in block.data))
 
-    def test_from_lines_filters_by_label(self):
-        """Test that from_lines filters by label when specified."""
-        result = CexBlock.from_lines(self.burney_data, label="ctscatalog")
+    def test_from_text_filters_by_label(self):
+        """Test that from_text filters by label when specified."""
+        result = CexBlock.from_text(self.burney_data, label="ctscatalog")
         self.assertTrue(all(b.label == "ctscatalog" for b in result))
         self.assertEqual(len(result), 1)
 
-    def test_from_lines_returns_multiple_blocks_same_label(self):
-        """Test that from_lines handles multiple blocks with same label."""
-        result = CexBlock.from_lines(self.lax_data, label="ctsdata")
+    def test_from_text_returns_multiple_blocks_same_label(self):
+        """Test that from_text handles multiple blocks with same label."""
+        result = CexBlock.from_text(self.lax_data, label="ctsdata")
         # laxlibrary1.cex has two #!ctsdata blocks
         self.assertEqual(len(result), 2)
         self.assertTrue(all(b.label == "ctsdata" for b in result))
 
-    def test_from_lines_no_blocks_for_invalid_label(self):
-        """Test that from_lines returns empty list for non-existent label."""
-        result = CexBlock.from_lines(self.burney_data, label="nonexistent")
+    def test_from_text_no_blocks_for_invalid_label(self):
+        """Test that from_text returns empty list for non-existent label."""
+        result = CexBlock.from_text(self.burney_data, label="nonexistent")
         self.assertEqual(result, [])
 
-    def test_from_lines_preserves_data_lines(self):
-        """Test that from_lines preserves the data lines exactly."""
-        result = CexBlock.from_lines(self.burney_data, label="ctsdata")
+    def test_from_text_preserves_data_lines(self):
+        """Test that from_text preserves the data lines exactly."""
+        result = CexBlock.from_text(self.burney_data, label="ctsdata")
         self.assertEqual(len(result), 1)
         self.assertEqual(len(result[0].data), 3)
 
-    def test_from_lines_handles_multiline_data(self):
-        """Test that from_lines handles blocks with multiple data lines."""
-        result = CexBlock.from_lines(self.lax_data, label="citecollections")
+    def test_from_text_handles_multiline_data(self):
+        """Test that from_text handles blocks with multiple data lines."""
+        result = CexBlock.from_text(self.lax_data, label="citecollections")
         self.assertEqual(len(result), 1)
         self.assertGreater(len(result[0].data), 0)
 
