@@ -1,0 +1,47 @@
+#!citecollections
+URN|Description|Labelling property|Ordering property|License
+urn:cite2:hmt:va_signs.v1:|Occurrences of Aristarchan critical signs in the Veentus A manuscript|urn:cite2:hmt:va_signs.v1.label:|urn:cite2:hmt:va_signs.v1.sequence:|CC-attribution-share-alike
+
+#!citeproperties
+Property|Label|Type|Authority list
+urn:cite2:hmt:va_signs.v1.urn:|URN|Cite2Urn|
+urn:cite2:hmt:va_signs.v1.label:|Name|String|
+urn:cite2:hmt:va_signs.v1.passage:|Iliad line|CtsUrn|
+urn:cite2:hmt:va_signs.v1.critsign:|Critical sign|Cite2Urn|
+urn:cite2:hmt:va_signs.v1.sequence:|Sequence|Number|
+
+#!citedata
+urn|label|passage|critsign|sequence
+urn:cite2:hmt:va_signs.v1:cs0|diple on Iliad 1.2|urn:cts:greekLit:tlg0012.tlg001.msA:1.2|urn:cite2:hmt:critsigns.v1:diple|0
+
+#!relationsetcatalog
+urn|urn:cite2:hmt:dse.v1:
+label|Collection of all DSE records for HMT project MSS
+psg|CtsUrn
+img|Cite2Urn
+surface|Cite2Urn
+
+
+#!citerelationset
+urn|urn:cite2:hmt:dse.v1:msBil8
+label|Collection of DSE records for Iliad 8 in the Venetus B
+passage|imageroi|surface
+// Here's a comment on 8.1.
+urn:cts:greekLit:tlg0012.tlg001.msB:8.1|urn:cite2:hmt:vbbifolio.v1:vb_102v_103r@0.4843,0.2961,0.2552,0.05667|urn:cite2:hmt:msB.v1:103r
+// Add a note on line 8.2!
+urn:cts:greekLit:tlg0012.tlg001.msB:8.2|urn:cite2:hmt:vbbifolio.v1:vb_102v_103r@0.4980,0.3358,0.2336,0.03061|urn:cite2:hmt:msB.v1:103r
+
+
+
+#!ctsdata
+urn:cts:citedemo:gburg.bancroft.v1:1|Four score and seven years ago our fathers brought forth, on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal.
+urn:cts:citedemo:gburg.bancroft.v1:2|Now we are engaged in a great civil war, testing whether that nation, or any nation so conceived, and so dedicated, can long endure. We are met on a great battle-field of that war. We have come to dedicate a portion of that field, as a final resting-place for those who here gave their lives, that that nation might live. It is altogether fitting and proper that we should do this.
+urn:cts:citedemo:gburg.bancroft.v1:3|But, in a larger sense, we can not dedicate, we can not consecrate we can not hallow this ground. The brave men, living and dead, who struggled here, have consecrated it far above our poor power to add or detract. The world will little note, nor long remember what we say here, but it can never forget what they did here. It is for us the living, rather, to be dedicated here to the unfinished work which they who fought here have thus far so nobly advanced.
+urn:cts:citedemo:gburg.bancroft.v1:4|It is rather for us to be here dedicated to the great task remaining before us that from these honored dead we take increased devotion to that cause for which they here gave the last full measure of devotion - that we here highly resolve that these dead shall not have died in vain that this nation, under God, shall have a new birth of freedom, and that government of the people, by the people, for the people, shall not perish from the earth.
+
+
+
+#!ctsdata
+urn:cts:greekLit:tlg5026.burney86.normed:8.73r_1.ref|urn:cts:greekLit:tlg0012.tlg001.burney86:8.title
+urn:cts:greekLit:tlg5026.burney86.normed:8.73r_1.comment|Τὴν ῥαψῳδίαν κῶλον μάχην καλοῦσι: συντέμνει γὰρ τὴν διήγησιν συναχθόμενος τοῖς Ἀχαιοῖς ⁑
+urn:cts:greekLit:tlg5026.burney86.normed:8.73r_2.lemma|κροκόπεπλος
