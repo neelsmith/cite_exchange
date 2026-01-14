@@ -15,21 +15,26 @@ pip install cite_exchange
 ### Requirements
 - Python 3.14+
 - pydantic >= 2.12.5
+- requests (for URL-based parsing)
 
 ## Quick Start
 
 ```python
 from cite_exchange.blocks import CexBlock
 
-# Load and parse a CEX file
+# Parse from a string
 with open('data.cex', 'r') as f:
     content = f.read()
-
-# Get all blocks from the CEX content
 all_blocks = CexBlock.from_text(content)
 
-# Get only blocks with a specific label
-ctsdata_blocks = CexBlock.from_text(content, label='ctsdata')
+# Parse directly from a file
+all_blocks = CexBlock.from_file('data.cex')
+
+# Parse directly from a URL
+all_blocks = CexBlock.from_url('https://example.com/data.cex')
+
+# Filter by label
+ctsdata_blocks = CexBlock.from_file('data.cex', label='ctsdata')
 
 # Access block data
 for block in ctsdata_blocks:
