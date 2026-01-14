@@ -4,8 +4,10 @@ version = "0.0.1"
 description = "A Python library for reading data in CITE EXchange (CEX) format."
 readme = "README.md"
 requires-python = ">=3.14"
-dependencies = []
-
+dependencies = [
+    "ipython",
+    "pydantic>=2.12.5",
+]
 
 [build-system]
 requires = ["hatchling"]
