@@ -36,8 +36,6 @@ def valid_label(label: str) -> bool:
     return label in validlabels
 
 
-
-
 class CexBlock(BaseModel):
     """A labelled block of text lines.
     
@@ -133,3 +131,11 @@ class CexBlock(BaseModel):
         response.raise_for_status()  # Raise an exception for bad status codes
         return cls.from_text(response.text, label=label)
     
+    def to_cex(self) -> str:
+        """Convert the CexBlock back to a CEX-formatted string.
+        
+        Returns:
+            str: The CEX-formatted string representation of this block.
+        """
+        lines = [f'#!{self.label}'] + self.data
+        return '\n'.join(lines)

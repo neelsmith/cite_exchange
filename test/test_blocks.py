@@ -351,8 +351,157 @@ class TestCexBlockFromUrl(unittest.TestCase):
             self.skipTest(f"Network unavailable or URL inaccessible: {e}")
 
 
-if __name__ == '__main__':
-    unittest.main()
+class TestCexBlockToCex(unittest.TestCase):
+    """Test cases for the CexBlock.to_cex method."""
+
+    def test_to_cex_basic_structure(self):
+        """Test that to_cex returns correctly formatted CEX string."""
+        block = CexBlock(label="ctsdata", data=["line1", "line2", "line3"])
+        result = block.to_cex()
+        
+        self.assertIsInstance(result, str)
+        self.assertTrue(result.startswith("#!ctsdata"))
+    
+    def test_to_cex_includes_label_line(self):
+        """Test that to_cex includes the label line with #! prefix."""
+        block = CexBlock(label="ctscatalog", data=["data1"])
+        result = block.to_cex()
+        
+        lines = result.split('\n')
+        self.assertEqual(lines[0], "#!ctscatalog")
+    
+    def test_to_cex_includes_all_data_lines(self):
+        """Test that to_cex includes all data lines."""
+        data_lines = ["line1", "line2", "line3", "line4"]
+        block = CexBlock(label="ctsdata", data=data_lines)
+        result = block.to_cex()
+        
+        lines = result.split('\n')
+        # First line is label, rest are data
+        self.assertEqual(len(lines), len(data_lines) + 1)
+        self.assertEqual(lines[1:], data_lines)
+    
+    def test_to_cex_preserves_data_content(self):
+        """Test that to_cex preserves exact data content."""
+        data_lines = [
+            "urn:cts:greekLit:tlg5026.burney86.normed:8.73r_1.ref|urn:cts:greekLit:tlg0012.tlg001.burney86:8.title",
+            "urn:cts:greekLit:tlg5026.burney86.normed:8.73r_1.comment|Τὴν ῥαψῳδίαν"
+        ]
+        block = CexBlock(label="ctsdata", data=data_lines)
+        result = block.to_cex()
+        
+        lines = result.split('\n')
+        self.assertEqual(lines[1], data_lines[0])
+        self.assertEqual(lines[2], data_lines[1])
+    
+    def test_to_cex_with_empty_data(self):
+        """Test that to_cex handles blocks with empty data list."""
+        block = CexBlock(label="ctsdata", data=[])
+        result = block.to_cex()
+        
+        self.assertEqual(result, "#!ctsdata")
+    
+    def test_to_cex_with_single_data_line(self):
+        """Test that to_cex works with a single data line."""
+        block = CexBlock(label="ctscatalog", data=["single line"])
+        result = block.to_cex()
+        
+        self.assertEqual(result, "#!ctscatalog\nsingle line")
+    
+    def test_to_cex_roundtrip(self):
+        """Test that from_text and to_cex are inverse operations."""
+        original_text = "#!ctsdata\nline1\nline2\nline3"
+        blocks = CexBlock.from_text(original_text)
+        
+        self.assertEqual(len(blocks), 1)
+        reconstructed = blocks[0].to_cex()
+        
+        self.assertEqual(reconstructed, original_text)
+    
+    def test_to_cex_roundtrip_multiple_blocks(self):
+        """Test roundtrip with multiple blocks."""
+        original_text = "#!ctscatalog\ncat1\ncat2\n\n#!ctsdata\ndata1\ndata2"
+        blocks = CexBlock.from_text(original_text)
+        
+        # Reconstruct by joining all blocks
+        reconstructed_blocks = [b.to_cex() for b in blocks]
+        
+        # Each block should be correctly formatted
+        self.assertEqual(reconstructed_blocks[0], "#!ctscatalog\ncat1\ncat2")
+        self.assertEqual(reconstructed_blocks[1], "#!ctsdata\ndata1\ndata2")
+    
+    def test_to_cex_with_special_characters(self):
+        """Test that to_cex preserves special characters in data."""
+        data_lines = [
+            "line with | pipe",
+            "line with #! hash-bang",
+            "line with // comment-like text",
+            "line with ⁑ special unicode"
+        ]
+        block = CexBlock(label="ctsdata", data=data_lines)
+        result = block.to_cex()
+        
+        lines = result.split('\n')
+        for i, expected in enumerate(data_lines):
+            self.assertEqual(lines[i + 1], expected)
+    
+    def test_to_cex_preserves_whitespace(self):
+        """Test that to_cex preserves whitespace in data lines."""
+        data_lines = [
+            "  leading spaces",
+            "trailing spaces  ",
+            "  both  ",
+            "tabs\there"
+        ]
+        block = CexBlock(label="ctsdata", data=data_lines)
+        result = block.to_cex()
+        
+        lines = result.split('\n')
+        for i, expected in enumerate(data_lines):
+            self.assertEqual(lines[i + 1], expected)
+    
+    def test_to_cex_with_different_labels(self):
+        """Test that to_cex works with different label types."""
+        labels_to_test = [
+            "cexversion",
+            "citelibrary",
+            "ctsdata",
+            "ctscatalog",
+            "citecollections",
+            "citeproperties",
+            "citedata"
+        ]
+        
+        for label in labels_to_test:
+            block = CexBlock(label=label, data=["test data"])
+            result = block.to_cex()
+            self.assertTrue(result.startswith(f"#!{label}"))
+    
+    def test_to_cex_integration_with_file_data(self):
+        """Test to_cex with data loaded from actual test files."""
+        test_data_path = Path(__file__).parent / "data" / "burneysample.cex"
+        blocks = CexBlock.from_file(str(test_data_path))
+        
+        # Convert each block back to CEX
+        for block in blocks:
+            result = block.to_cex()
+            
+            # Verify structure
+            self.assertIsInstance(result, str)
+            self.assertTrue(result.startswith(f"#!{block.label}"))
+            
+            # Verify all data lines are present
+            lines = result.split('\n')
+            self.assertEqual(len(lines), len(block.data) + 1)
+    
+    def test_to_cex_no_trailing_newline(self):
+        """Test that to_cex does not add a trailing newline."""
+        block = CexBlock(label="ctsdata", data=["line1", "line2"])
+        result = block.to_cex()
+        
+        self.assertFalse(result.endswith('\n\n'))
+        self.assertFalse(result.endswith('\n') and result != "#!ctsdata\nline1\nline2")
+
 
 if __name__ == '__main__':
     unittest.main()
