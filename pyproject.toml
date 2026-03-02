@@ -3,7 +3,7 @@ name = "cite_exchange"
 version = "0.2.0"
 description = "A Python library for reading data in CITE EXchange (CEX) format."
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.13"
 dependencies = [
     "ipython",
     "pydantic>=2.12.5",
