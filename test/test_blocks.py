@@ -1,7 +1,7 @@
 import unittest
 import sys
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
@@ -233,100 +233,82 @@ class TestCexBlockFromUrl(unittest.TestCase):
         with open(test_data_path, 'r') as f:
             self.lax_data = f.read()
 
-    @patch('cite_exchange.blocks.requests.get')
-    def test_from_url_returns_list_of_cex_blocks(self, mock_get):
+    @patch('cite_exchange.blocks.fetch_url_text')
+    def test_from_url_returns_list_of_cex_blocks(self, mock_fetch):
         """Test that from_url returns a list of CexBlock objects."""
-        mock_response = MagicMock()
-        mock_response.text = self.burney_data
-        mock_get.return_value = mock_response
+        mock_fetch.return_value = self.burney_data
         
         result = CexBlock.from_url("https://example.com/data.cex")
         self.assertIsInstance(result, list)
         self.assertTrue(all(isinstance(b, CexBlock) for b in result))
 
-    @patch('cite_exchange.blocks.requests.get')
-    def test_from_url_parses_all_blocks(self, mock_get):
+    @patch('cite_exchange.blocks.fetch_url_text')
+    def test_from_url_parses_all_blocks(self, mock_fetch):
         """Test that from_url parses all labeled blocks from URL."""
-        mock_response = MagicMock()
-        mock_response.text = self.burney_data
-        mock_get.return_value = mock_response
+        mock_fetch.return_value = self.burney_data
         
         result = CexBlock.from_url("https://example.com/data.cex")
         labels_found = [b.label for b in result]
         self.assertIn("ctscatalog", labels_found)
         self.assertIn("ctsdata", labels_found)
 
-    @patch('cite_exchange.blocks.requests.get')
-    def test_from_url_filters_by_label(self, mock_get):
+    @patch('cite_exchange.blocks.fetch_url_text')
+    def test_from_url_filters_by_label(self, mock_fetch):
         """Test that from_url filters by label when specified."""
-        mock_response = MagicMock()
-        mock_response.text = self.burney_data
-        mock_get.return_value = mock_response
+        mock_fetch.return_value = self.burney_data
         
         result = CexBlock.from_url("https://example.com/data.cex", label="ctscatalog")
         self.assertTrue(all(b.label == "ctscatalog" for b in result))
         self.assertEqual(len(result), 1)
 
-    @patch('cite_exchange.blocks.requests.get')
-    def test_from_url_handles_multiple_blocks_same_label(self, mock_get):
+    @patch('cite_exchange.blocks.fetch_url_text')
+    def test_from_url_handles_multiple_blocks_same_label(self, mock_fetch):
         """Test that from_url handles multiple blocks with same label from URL."""
-        mock_response = MagicMock()
-        mock_response.text = self.lax_data
-        mock_get.return_value = mock_response
+        mock_fetch.return_value = self.lax_data
         
         result = CexBlock.from_url("https://example.com/data.cex", label="ctsdata")
         self.assertEqual(len(result), 2)
         self.assertTrue(all(b.label == "ctsdata" for b in result))
 
-    @patch('cite_exchange.blocks.requests.get')
-    def test_from_url_no_blocks_for_invalid_label(self, mock_get):
+    @patch('cite_exchange.blocks.fetch_url_text')
+    def test_from_url_no_blocks_for_invalid_label(self, mock_fetch):
         """Test that from_url returns empty list for non-existent label."""
-        mock_response = MagicMock()
-        mock_response.text = self.burney_data
-        mock_get.return_value = mock_response
+        mock_fetch.return_value = self.burney_data
         
         result = CexBlock.from_url("https://example.com/data.cex", label="nonexistent")
         self.assertEqual(result, [])
 
-    @patch('cite_exchange.blocks.requests.get')
-    def test_from_url_excludes_comments(self, mock_get):
+    @patch('cite_exchange.blocks.fetch_url_text')
+    def test_from_url_excludes_comments(self, mock_fetch):
         """Test that from_url excludes comment lines starting with //."""
-        mock_response = MagicMock()
-        mock_response.text = self.lax_data
-        mock_get.return_value = mock_response
+        mock_fetch.return_value = self.lax_data
         
         result = CexBlock.from_url("https://example.com/data.cex")
         for block in result:
             self.assertTrue(all(not line.startswith('//') for line in block.data))
 
-    @patch('cite_exchange.blocks.requests.get')
-    def test_from_url_excludes_empty_lines(self, mock_get):
+    @patch('cite_exchange.blocks.fetch_url_text')
+    def test_from_url_excludes_empty_lines(self, mock_fetch):
         """Test that from_url excludes empty lines from data."""
-        mock_response = MagicMock()
-        mock_response.text = self.lax_data
-        mock_get.return_value = mock_response
+        mock_fetch.return_value = self.lax_data
         
         result = CexBlock.from_url("https://example.com/data.cex")
         for block in result:
             self.assertTrue(all(line.strip() for line in block.data))
 
-    @patch('cite_exchange.blocks.requests.get')
-    def test_from_url_calls_requests_get_with_url(self, mock_get):
-        """Test that from_url calls requests.get with the correct URL."""
-        mock_response = MagicMock()
-        mock_response.text = self.burney_data
-        mock_get.return_value = mock_response
+    @patch('cite_exchange.blocks.fetch_url_text')
+    def test_from_url_calls_fetch_with_url(self, mock_fetch):
+        """Test that from_url calls fetch_url_text with the correct URL."""
+        mock_fetch.return_value = self.burney_data
         
         url = "https://example.com/data.cex"
         CexBlock.from_url(url)
-        mock_get.assert_called_once_with(url)
+        mock_fetch.assert_called_once_with(url)
 
-    @patch('cite_exchange.blocks.requests.get')
-    def test_from_url_raises_for_bad_status(self, mock_get):
-        """Test that from_url raises an exception for bad HTTP status codes."""
-        mock_response = MagicMock()
-        mock_response.raise_for_status.side_effect = Exception("404 Not Found")
-        mock_get.return_value = mock_response
+    @patch('cite_exchange.blocks.fetch_url_text')
+    def test_from_url_raises_for_bad_status(self, mock_fetch):
+        """Test that from_url raises an exception for fetch errors."""
+        mock_fetch.side_effect = Exception("404 Not Found")
         
         with self.assertRaises(Exception):
             CexBlock.from_url("https://example.com/nonexistent.cex")

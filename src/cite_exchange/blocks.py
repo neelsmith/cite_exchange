@@ -1,5 +1,10 @@
-from pydantic import BaseModel #, Field
-import requests
+from dataclasses import dataclass
+from urllib.request import urlopen
+
+
+def fetch_url_text(url: str) -> str:
+    with urlopen(url) as response:
+        return response.read().decode("utf-8")
 
 def labels(s: str) -> list[str]:
     """Find the labels in a CEX-formatted string.
@@ -36,7 +41,8 @@ def valid_label(label: str) -> bool:
     return label in validlabels
 
 
-class CexBlock(BaseModel):
+@dataclass
+class CexBlock:
     """A labelled block of text lines.
     
     ADD DETAILS ON CEX FORMAT HERE.
@@ -127,9 +133,8 @@ class CexBlock(BaseModel):
             list["CexBlock"]: A list of CexBlock instances, one for each labeled block.
                 If label is specified, only blocks matching that label are returned.
         """
-        response = requests.get(url)
-        response.raise_for_status()  # Raise an exception for bad status codes
-        return cls.from_text(response.text, label=label)
+        content = fetch_url_text(url)
+        return cls.from_text(content, label=label)
     
     def to_cex(self) -> str:
         """Convert the CexBlock back to a CEX-formatted string.

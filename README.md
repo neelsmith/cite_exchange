@@ -13,9 +13,7 @@ pip install cite_exchange
 ```
 
 ### Requirements
-- Python 3.14+
-- pydantic >= 2.12.5
-- requests (for URL-based parsing)
+- Python 3.13+
 
 ## Quick Start
 
@@ -48,7 +46,32 @@ for block in ctsdata_blocks:
 
 ### `CexBlock`
 
-A Pydantic model representing a labeled block of text data from a CEX source.
+A dataclass representing a labeled block of text data from a CEX source.
+
+## marimo + WASM
+
+The package is pure Python and can be used in marimo notebooks compiled to HTML/WASM.
+
+In a marimo notebook, install from a wheel URL (or local wheel served over HTTP):
+
+```python
+import micropip
+await micropip.install("https://<your-host>/cite_exchange-0.2.0-py3-none-any.whl")
+
+from cite_exchange import CexBlock
+```
+
+For browser environments, prefer `CexBlock.from_text(...)` with already-loaded content.
+
+An example marimo notebook script is included at `examples/marimo_wasm_notebook.py`.
+
+Run locally:
+
+```bash
+marimo edit examples/marimo_wasm_notebook.py
+```
+
+Then export with your installed marimo HTML/WASM export command (this can vary by version).
 
 #### Attributes
 - `label` (str): The label identifier for this block (without the `#!` prefix)
