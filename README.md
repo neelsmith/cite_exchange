@@ -13,7 +13,7 @@ pip install cite_exchange
 ```
 
 ### Requirements
-- Python 3.13+
+- Python 3.13.7+
 
 ## Quick Start
 
